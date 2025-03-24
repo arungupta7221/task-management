@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const connectDB = require('../config/db'); // Adjusted import
+const connectDB = require('../config/db');
 
 connectDB();
 
@@ -10,8 +10,9 @@ module.exports = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'POST') {
-        if (req.url === '/api/auth/register') {
-            const { email, password } = req.body;
+        const { email, password } = req.body;
+
+        if (req.path === '/api/auth/register') {
             try {
                 let user = await User.findOne({ email });
                 if (user) return res.status(400).json({ message: 'User already exists' });
@@ -25,8 +26,7 @@ module.exports = async (req, res) => {
             } catch (error) {
                 res.status(500).json({ message: 'Server error', error: error.message });
             }
-        } else if (req.url === '/api/auth/login') {
-            const { email, password } = req.body;
+        } else if (req.path === '/api/auth/login') {
             try {
                 const user = await User.findOne({ email });
                 if (!user) return res.status(400).json({ message: 'Invalid credentials' });
